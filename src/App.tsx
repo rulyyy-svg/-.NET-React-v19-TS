@@ -5,6 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({ routeTree });
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -18,5 +24,8 @@ const App = () => {
 };
 
 const container = document.getElementById("root");
+if (!container) {
+  throw new Error("no container to render to");
+}
 const root = createRoot(container);
 root.render(<App />);
