@@ -2,7 +2,7 @@ import { defineWorkspace } from "vitest/config";
 
 export default defineWorkspace([
   {
-    extends: "./vite.config.js",
+    extends: "./vite.config.ts",
     test: {
       include: ["**/*.node.test.{js,jsx,ts,tsx}"],
       name: "happy-dom",
@@ -10,7 +10,7 @@ export default defineWorkspace([
     },
   },
   {
-    extends: "./vite.config.js",
+    extends: "./vite.config.ts",
     test: {
       setupFiles: ["vitest-browser-react"],
       include: ["**/*.browser.test.{js,jsx,ts,tsx}"],
