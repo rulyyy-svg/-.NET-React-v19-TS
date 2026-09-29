@@ -16,7 +16,7 @@ function ContactRoute() {
   const mutation = useMutation({
     mutationFn: function (e: SubmitEvent<HTMLFormElement>) {
       e.preventDefault();
-      const formData = new FormData(e.target);
+      const formData = new FormData(e.currentTarget);
       return postContact(
         getString(formData, "name"),
         getString(formData, "email"),
