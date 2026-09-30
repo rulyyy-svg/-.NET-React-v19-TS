@@ -19,6 +19,7 @@
   "license": "Apache-2.0",
   "description": "The Complete Intro to React v9, as taught by Brian Holt for Frontend Masters",
   "devDependencies": {
+    "@tailwindcss/forms": "0.5.11",
     "@tailwindcss/vite": "4.3.3",
     "@tanstack/eslint-plugin-query": "5.59.7",
     "@tanstack/router-devtools": "1.65.0",
