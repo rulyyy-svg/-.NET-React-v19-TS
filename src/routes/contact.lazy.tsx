@@ -35,18 +35,18 @@ function ContactRoute() {
       ) : (
         <form className="flex flex-col items-center" onSubmit={mutation.mutate}>
           <input
-            className="my-3.75 w-125 rounded-[5px] border-2 border-border p-2 focus:border-primary disabled:bg-[#999]"
+            className="my-3.75 w-full max-w-125 rounded-[5px] border-2 border-border p-2 focus:border-primary disabled:bg-[#999]"
             name="name"
             placeholder="Name"
           />
           <input
-            className="my-3.75 w-125 rounded-[5px] border-2 border-border p-2 focus:border-primary disabled:bg-[#999]"
+            className="my-3.75 w-full max-w-125 rounded-[5px] border-2 border-border p-2 focus:border-primary disabled:bg-[#999]"
             type="email"
             name="email"
             placeholder="Email"
           />
           <textarea
-            className="my-3.75 w-125 rounded-[5px] border-2 border-border p-2 focus:border-primary min-h-50"
+            className="my-3.75 w-full max-w-125 rounded-[5px] border-2 border-border p-2 focus:border-primary min-h-50"
             placeholder="Message"
             name="message"
           ></textarea>
