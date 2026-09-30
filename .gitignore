@@ -1,0 +1,15 @@
+node_modules/
+
+dist/
+
+.env
+
+.DS_Store
+
+coverage/
+
+.vscode/
+
+routeTree.gen.ts
+
+test-results/
