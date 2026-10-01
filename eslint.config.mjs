@@ -14,6 +14,7 @@ export default tseslint.config(
       "coverage/**",
       "node_modules/**",
       ".vite/**",
+      "dist/",
       "src/routeTree.gen.ts",
     ],
   },

@@ -9,22 +9,22 @@ const PizzaOfTheDay = () => {
   const pizzaOfTheDay = usePizzaOfTheDay();
 
   if (!pizzaOfTheDay) {
-    return <div>Loading...</div>;
+    return <div className="text-center font-bold">Loading...</div>;
   }
 
   return (
-    <div className="pizza-of-the-day">
-      <h2>Pizza of the Day</h2>
-      <div>
-        <div className="pizza-of-the-day-info">
-          <h3>{pizzaOfTheDay.name}</h3>
+    <div className="w-full mt-12.5 border-t border-border">
+      <h2 className="text-center">Pizza of the Day</h2>
+      <div className="flex items-center justify-center">
+        <div className="mr-7.5 text-center leading-loose">
+          <h3 className="text-[1.17em] font-bold">{pizzaOfTheDay.name}</h3>
           <p>{pizzaOfTheDay.description}</p>
           <p className="pizza-of-the-day-price">
-            From: {intl.format(pizzaOfTheDay.sizes.S)}
+            From: <span>{intl.format(pizzaOfTheDay.sizes.S)}</span>
           </p>
         </div>
         <img
-          className="pizza-of-the-day-image"
+          className="max-w-[200px] rounded-[5px] border border-border"
           src={pizzaOfTheDay.image}
           alt={pizzaOfTheDay.name}
         />

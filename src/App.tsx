@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
-// Impor CartContext dan tipe CartItem dari file konteks
+import "./index.css";
 import { CartContext, type CartItem } from "./contexts"; 
 
 const router = createRouter({ routeTree });

@@ -1,24 +1,39 @@
 import { Component } from "react";
 import type { ErrorInfo, ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
 
-class ErrorBoundary extends Component<{ children: ReactNode }> {
-  state = { hasError: false };
+interface Props {
+  children: ReactNode;
+}
 
-  static getDerivedStateFromError() {
+interface state {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends Component<Props, state> {
+  public state: state = {
+    hasError: false,
+  };
+
+public static getDerivedStateFromError(_: Error): state {
     return { hasError: true };
-  }
+}
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("ErrorBoundary caught an error", error, info);
-  }
+public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  console.error("Uncaught error:", error, errorInfo);
+}
 
-  render() {
+public render() {
     if (this.state.hasError) {
       return (
-        <div className="error-boundary">
-          <h2>Something went wrong!</h2>
+        <div className="min-h-[400px] text-center">
+          <h2>Uh oh!</h2>
           <p>
-            There was an error with this page. <a href="/">Click here</a> to go back to the home page.
+            There was an error with this listing.{" "}
+            <Link to="/" className="text-primary underline hover:no-underline">
+              Click here
+            </Link>{" "}
+            to back to the home page.
           </p>
         </div>
       );

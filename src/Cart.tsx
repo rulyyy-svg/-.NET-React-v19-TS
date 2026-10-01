@@ -16,20 +16,22 @@ export default function Cart({ cart, checkout }: Props) {
     const current = cart[i];
     total += current.pizza.sizes[current.size];
   }
-  return (
-    <div className="cart">
-      <h2>Cart</h2>
-      <ul>
-        {cart.map((item, index) => (
-          <li key={index}>
-            <span className="size">{item.size}</span> –
-            <span className="type">{item.pizza.name}</span> –
-            <span className="price">{item.price}</span>
-          </li>
-        ))}
-      </ul>
-      <p>Total: {intl.format(total)}</p>
-      <button onClick={checkout}>Checkout</button>
-    </div>
-  );
+return (
+  <div className="border-t border-border p-3.75 text-center leading-normal lg:border-t-0 lg:border-l">
+    <h2>Cart</h2>
+    <ul>
+      {cart.map((item, index) => (
+        <li key={index}>
+          <span className="size">{item.size}</span> –
+          <span className="type">{item.pizza.name}</span> –
+          <span className="price">{item.price}</span>
+        </li>
+      ))}
+    </ul>
+    <p className="my-3.75">Total: {intl.format(total)}</p>
+      <button className="btn" onClick={checkout}>
+        Checkout
+      </button>
+  </div>
+);
 }

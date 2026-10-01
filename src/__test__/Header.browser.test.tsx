@@ -29,7 +29,7 @@ const threeItems: CartItem[] = [
   { pizza: testPizza, size: "L", price: "$15.25" },
 ];
 
-test("correctly renders a header with a zero cart count", () => {
+test("correctly renders a header with a zero cart count", async () => {
   const rootRoute = createRootRoute({
     component: () => (
       <CartContext.Provider value={[[], () => {}]}>
@@ -43,13 +43,13 @@ test("correctly renders a header with a zero cart count", () => {
     <RouterProvider<typeof router> router={router}></RouterProvider>,
   );
 
-  const itemsInCart = screen.getByTestId("cart-number");
+  const itemsInCart = await screen.findByTestId("cart-number");
 
   expect(itemsInCart).toBeTruthy();
   expect(itemsInCart.textContent).toBe("0");
 });
 
-test("correctly renders a header with a three cart count", () => {
+test("correctly renders a header with a three cart count", async () => {
   const rootRoute = createRootRoute({
     component: () => (
       <CartContext.Provider value={[threeItems, () => {}]}>
@@ -63,7 +63,7 @@ test("correctly renders a header with a three cart count", () => {
     <RouterProvider<typeof router> router={router}></RouterProvider>,
   );
 
-  const itemsInCart = screen.getByTestId("cart-number");
+  const itemsInCart = await screen.findByTestId("cart-number");
 
   expect(itemsInCart).toBeTruthy();
   expect(itemsInCart.textContent).toBe("3");
