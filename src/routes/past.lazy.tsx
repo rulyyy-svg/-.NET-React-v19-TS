@@ -1,9 +1,15 @@
 import { useState } from "react";
+
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import getPastOrders from "../api/getPastOrders";
-import getPastOrder from "../api/getPastOrder";
+
 import Modal from "../Modal";
+
+import { skipToken } from "@reduxjs/toolkit/query/react";
+
+import {
+  useGetPastOrderQuery,
+  useGetPastOrdersQuery,
+} from "../api/pizzaApi";
 
 export const Route = createLazyFileRoute("/past")({
   component: PastOrdersRoute,
@@ -24,20 +30,16 @@ const tbodyTrClass =
 
 function PastOrdersRoute() {
   const [page, setPage] = useState(1);
+
   const [focusedOrder, setFocusedOrder] = useState<number | undefined>(
-    undefined
+    undefined,
   );
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["past-orders", page],
-    queryFn: () => getPastOrders(page),
-  });
+  const { data, isLoading, isError } = useGetPastOrdersQuery(page);
 
-  const { data: pastOrderData } = useQuery({
-    queryKey: ["past-order", focusedOrder],
-    queryFn: () => getPastOrder(focusedOrder as number),
-    enabled: !!focusedOrder,
-  });
+  const { data: pastOrderData } = useGetPastOrderQuery(
+    focusedOrder ?? skipToken,
+  );
 
   if (isLoading) {
     return (
@@ -45,6 +47,10 @@ function PastOrdersRoute() {
         <h2>LOADING …</h2>
       </div>
     );
+  }
+
+  if (isError || !data) {
+    throw new Error("Past orders could not be loaded");
   }
 
   return (
@@ -59,8 +65,9 @@ function PastOrdersRoute() {
               <td className={thTdClass}>Time</td>
             </tr>
           </thead>
+
           <tbody>
-            {data?.map((order) => (
+            {data.map((order) => (
               <tr key={order.order_id} className={tbodyTrClass}>
                 <td className={thTdClass}>
                   <button
@@ -70,7 +77,9 @@ function PastOrdersRoute() {
                     {order.order_id}
                   </button>
                 </td>
+
                 <td className={thTdClass}>{order.date}</td>
+
                 <td className={thTdClass}>{order.time}</td>
               </tr>
             ))}
@@ -79,7 +88,7 @@ function PastOrdersRoute() {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-evenly my-4">
+      <div className="my-4 flex items-center justify-evenly">
         <button
           className="btn"
           disabled={page <= 1}
@@ -87,10 +96,12 @@ function PastOrdersRoute() {
         >
           Previous
         </button>
+
         <div className="font-serif text-[20px] text-primary">{page}</div>
+
         <button
           className="btn"
-          disabled={!data || data.length < 10}
+          disabled={data.length < 10}
           onClick={() => setPage((p) => p + 1)}
         >
           Next
@@ -101,6 +112,7 @@ function PastOrdersRoute() {
       {focusedOrder ? (
         <Modal>
           <h2>Order #{focusedOrder}</h2>
+
           {pastOrderData ? (
             <div className="w-full overflow-x-auto">
               <table className={tableClass}>
@@ -114,6 +126,7 @@ function PastOrdersRoute() {
                     <td className={thTdClass}>Total</td>
                   </tr>
                 </thead>
+
                 <tbody>
                   {pastOrderData.orderItems.map((pizza) => (
                     <tr
@@ -122,17 +135,22 @@ function PastOrdersRoute() {
                     >
                       <td className={thTdClass}>
                         <img
-                          className="w-[50px] mx-auto"
+                          className="mx-auto w-[50px]"
                           src={pizza.image}
                           alt={pizza.name}
                         />
                       </td>
+
                       <td className={thTdClass}>{pizza.name}</td>
+
                       <td className={thTdClass}>{pizza.size}</td>
+
                       <td className={thTdClass}>{pizza.quantity}</td>
+
                       <td className={thTdClass}>
                         {intl.format(pizza.price)}
                       </td>
+
                       <td className={thTdClass}>
                         {intl.format(pizza.total)}
                       </td>
@@ -144,6 +162,7 @@ function PastOrdersRoute() {
           ) : (
             <p>Loading …</p>
           )}
+
           <button
             className="btn mt-4"
             onClick={() => setFocusedOrder(undefined)}

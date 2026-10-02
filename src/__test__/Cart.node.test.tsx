@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { render } from "@testing-library/react";
 import Cart from "../Cart";
-import type { CartItem } from "../contexts";
+import type { CartItem } from "../cartSlice";
 
 test("snapshot with nothing in cart", () => {
   const emptyCart: CartItem[] = [];
