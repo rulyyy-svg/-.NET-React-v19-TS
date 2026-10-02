@@ -1,6 +1,7 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { CartContext } from "../contexts";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { addToCart, clearCart, selectCartItems } from "../cartSlice";
 import Cart from "../Cart";
 import Pizza from "../Pizza";
 import type { Pizza as PizzaType, PizzaSize } from "../APIResponsesTypes";
@@ -24,7 +25,8 @@ function Order() {
   const [pizzaSize, setPizzaSize] = useState<PizzaSize>("M");
   const [pizzaTypes, setPizzaTypes] = useState<PizzaType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [cart, setCart] = useContext(CartContext);
+  const cart = useAppSelector(selectCartItems);
+  const dispatch = useAppDispatch();
 
   async function checkout() {
     setLoading(true);
@@ -39,7 +41,7 @@ function Order() {
       }),
     });
 
-    setCart([]);
+    dispatch(clearCart());
     setLoading(false);
   }
 
@@ -74,10 +76,9 @@ function Order() {
             if (!selectedPizza || !price) {
               return;
             }
-            setCart([
-              ...cart,
-              { pizza: selectedPizza, size: pizzaSize, price },
-            ]);
+            dispatch(
+              addToCart({ pizza: selectedPizza, size: pizzaSize, price }),
+            );
           }}
         >
           <div className="my-2.5 w-full border-b border-border p-3.75 text-center md:border-r md:border-b-0">
