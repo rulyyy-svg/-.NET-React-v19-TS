@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { addToCart, clearCart, selectCartItems } from "../cartSlice";
@@ -8,6 +8,7 @@ import {
   setPizzaSize,
   setPizzaType,
 } from "../orderSlice";
+import { useGetPizzasQuery } from "../api/pizzaApi";
 import Cart from "../Cart";
 import Pizza from "../Pizza";
 import type { Pizza as PizzaType, PizzaSize } from "../APIResponsesTypes";
@@ -29,13 +30,15 @@ export const Route = createLazyFileRoute("/order")({
 function Order() {
   const pizzaType = useAppSelector(selectPizzaType);
   const pizzaSize = useAppSelector(selectPizzaSize);
-  const [pizzaTypes, setPizzaTypes] = useState<PizzaType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: pizzaTypes = [], isLoading: isLoadingPizzas } =
+    useGetPizzasQuery();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const loading = isLoadingPizzas || isCheckingOut;
   const cart = useAppSelector(selectCartItems);
   const dispatch = useAppDispatch();
 
   async function checkout() {
-    setLoading(true);
+    setIsCheckingOut(true);
 
     await fetch("/api/order", {
       method: "POST",
@@ -48,7 +51,7 @@ function Order() {
     });
 
     dispatch(clearCart());
-    setLoading(false);
+    setIsCheckingOut(false);
   }
 
   let price: string | undefined;
@@ -58,17 +61,6 @@ function Order() {
     price = selectedPizza
       ? intl.format(selectedPizza.sizes[pizzaSize])
       : undefined;
-  }
-
-  useEffect(() => {
-    void fetchPizzaTypes();
-  }, []);
-
-  async function fetchPizzaTypes() {
-    const pizzasRes = await fetch("/api/pizzas");
-    const pizzasJson = (await pizzasRes.json()) as PizzaType[];
-    setPizzaTypes(pizzasJson);
-    setLoading(false);
   }
 
   return (
