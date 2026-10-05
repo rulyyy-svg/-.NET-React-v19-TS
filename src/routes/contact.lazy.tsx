@@ -1,7 +1,7 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
 import type { FormEvent } from "react";
-import postContact from "../api/postContact";
+
+import { usePostContactMutation } from "../api/pizzaApi";
 
 export const Route = createLazyFileRoute("/contact")({
   component: ContactRoute,
@@ -16,26 +16,25 @@ function getString(formData: FormData, key: string): string {
 }
 
 function ContactRoute() {
-  const mutation = useMutation({
-    mutationFn: (formData: FormData) => {
-      return postContact(
-        getString(formData, "name"),
-        getString(formData, "email"),
-        getString(formData, "message")
-      );
-    },
-  });
+  const [postContact, { isSuccess, isLoading }] = usePostContactMutation();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const formData = new FormData(e.currentTarget);
-    mutation.mutate(formData);
+
+    void postContact({
+      name: getString(formData, "name"),
+      email: getString(formData, "email"),
+      message: getString(formData, "message"),
+    });
   };
 
   return (
     <div>
       <h2>Contact</h2>
-      {mutation.isSuccess ? (
+
+      {isSuccess ? (
         <h3 className="m-12.5 text-center font-pacifico text-[30px] font-normal text-secondary">
           Submitted!
         </h3>
@@ -50,29 +49,32 @@ function ContactRoute() {
             name="name"
             placeholder="Name"
             required
-            disabled={mutation.isPending}
+            disabled={isLoading}
           />
+
           <input
             className={inputClass}
             type="email"
             name="email"
             placeholder="Email"
             required
-            disabled={mutation.isPending}
+            disabled={isLoading}
           />
+
           <textarea
             className={`${inputClass} min-h-[200px]`}
             name="message"
             placeholder="Message"
             required
-            disabled={mutation.isPending}
+            disabled={isLoading}
           ></textarea>
+
           <button
             type="submit"
             className="btn relative z-10"
-            disabled={mutation.isPending}
+            disabled={isLoading}
           >
-            {mutation.isPending ? "Submitting..." : "Submit"}
+            {isLoading ? "Submitting..." : "Submit"}
           </button>
         </form>
       )}

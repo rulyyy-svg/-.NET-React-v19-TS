@@ -1,9 +1,11 @@
-
 import { expect, test, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import createFetchMock from "vitest-fetch-mock";
+import type { ReactNode } from "react";
+import { Provider } from "react-redux";
 
 import { usePizzaOfTheDay } from "../usePizzaOfTheDay";
+import { makeStore } from "../store";
 
 const fetchMocker = createFetchMock(vi);
 
@@ -27,10 +29,20 @@ const testPizza = {
   },
 };
 
+function createWrapper() {
+  const store = makeStore();
+
+  return function Wrapper({ children }: { children: ReactNode }) {
+    return <Provider store={store}>{children}</Provider>;
+  };
+}
+
 test("to be null on initial load", () => {
   fetchMocker.mockResponseOnce(JSON.stringify(testPizza));
 
-  const { result } = renderHook(() => usePizzaOfTheDay());
+  const { result } = renderHook(() => usePizzaOfTheDay(), {
+    wrapper: createWrapper(),
+  });
 
   expect(result.current).toBeNull();
 });
@@ -38,13 +50,22 @@ test("to be null on initial load", () => {
 test("to call the API and give back the pizza of the day", async () => {
   fetchMocker.mockResponseOnce(JSON.stringify(testPizza));
 
-  const { result } = renderHook(() => usePizzaOfTheDay());
+  const { result } = renderHook(() => usePizzaOfTheDay(), {
+    wrapper: createWrapper(),
+  });
 
   await waitFor(() => {
     expect(result.current).toEqual(testPizza);
   });
 
-  expect(fetchMocker).toHaveBeenCalledWith(
-    "/api/pizza-of-the-day"
-  );
+  const request = fetchMocker.mock.calls[0]?.[0];
+
+  expect(request).toBeInstanceOf(Request);
+
+  if (!(request instanceof Request)) {
+    throw new Error("Expected fetch to receive a Request");
+  }
+
+  expect(request.url).toContain("/api/pizza-of-the-day");
+  expect(request.method).toBe("GET");
 });

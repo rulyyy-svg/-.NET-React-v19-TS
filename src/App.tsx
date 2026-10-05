@@ -1,12 +1,15 @@
-import { StrictMode, useState } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { routeTree } from "./routeTree.gen";
-import "./index.css";
-import { CartContext, type CartItem } from "./contexts"; 
+import { Provider } from "react-redux";
 
-const router = createRouter({ routeTree });
+import { routeTree } from "./routeTree.gen";
+import { store } from "./store";
+import "./index.css";
+
+const router = createRouter({
+  routeTree,
+});
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -14,18 +17,12 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const queryClient = new QueryClient();
-
 const App = () => {
-  const cartHook = useState<CartItem[]>([]);
-
   return (
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <CartContext.Provider value={cartHook}>
-          <RouterProvider router={router} />
-        </CartContext.Provider>
-      </QueryClientProvider>
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
     </StrictMode>
   );
 };
@@ -37,6 +34,7 @@ if (!container) {
 }
 
 const root = createRoot(container);
+
 root.render(<App />);
 
 export default App;
